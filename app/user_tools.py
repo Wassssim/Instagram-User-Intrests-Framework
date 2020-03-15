@@ -54,9 +54,3 @@ def __get_account_by_username(username):
     print(media)   
     account = media.owner
     print(account)
-
-l=Logger.getInstance()
-print(l)
-l=Logger.getInstance()
-print(l)
-print(Logger.getInstance())
