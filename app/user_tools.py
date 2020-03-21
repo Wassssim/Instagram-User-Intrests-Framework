@@ -1,5 +1,6 @@
 from my_credantials import username , password , path_to_cache_folder
 from context import Instagram # pylint: disable=no-name-in-module
+import urllib.request
 
 #Login Singleton
 class Meta_Logger:
@@ -33,7 +34,17 @@ def __get_media_by_url(url):
     media = instagram.get_media_by_url(url)
     print(media)
     print(media.owner)
+def __get_account_medias_by_username(username):
+    instagram = Instagram()
 
+    medias = instagram.get_medias(username, )
+    media = medias[6]
+
+    print(media)
+    
+    account = media.owner
+    print(account)
+    return media 
 def __get_media_comments(id):
     instagram=Logger.getInstance().instagram
     comments = instagram.get_media_comments_by_id(id, 10000)
@@ -47,10 +58,13 @@ def __get_media_likes(code):
     print("Result count: " + str(len(likes['accounts'])))
     for like in likes['accounts']:
         print(like)
-def __get_account_by_username(username):
+def __get_account_by_username(username,number_of_medias):
     instagram=Logger.getInstance().instagram
-    medias = instagram.get_medias("kevin", 25)
+    medias = instagram.get_medias(username, number_of_medias)
     media = medias[6]
-    print(media)   
+    print(medias)   
     account = media.owner
     print(account)
+
+
+__get_account_by_username("natgeo",1000)
