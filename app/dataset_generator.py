@@ -41,10 +41,6 @@ def generateDataset(input_filename):
     print ('scrapping...')
     interest = input_filename.replace(account_names_path,'')
     for line in Lines:
-        #####_________Wassim's code : works but we need to attribute how much posts we want to get
-        #account = line[:-1].split(' ')
-        # medias = instagram.get_medias(account[0], int(account[1]))
-        #####_________Tawfik's code : gets max (threshhold , user's post number)
         account = line[:-1].split(' ')[0]
             
         medias=get_medias(account,threshhold)
@@ -70,11 +66,9 @@ def generateDataset(input_filename):
     file.close()
     return interest
 
-    
-    #get_medias("technologyreview",1000)
-
 if __name__=="__main__":
-    input_files = get_all_files( )
+    #input_files = get_all_files( )
+    input_files=['Technology']
     for input_file in input_files :
         input_file_added_to_path=account_names_path+input_file
         print(input_file_added_to_path )
@@ -88,10 +82,6 @@ if __name__=="__main__":
     
         except Exception as e:
             print(e)
-       
-
-#print(media.__dict__)
-
 
 
 #Problems:
