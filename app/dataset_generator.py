@@ -5,12 +5,11 @@ import json
 from os import listdir
 from os.path import isfile, join
 
-
 account_names_path="../dataset/account_names/"
 output_path="../dataset/collected_data/"
 instagram = Instagram()
 dataset = {}
-threshhold = 3000
+threshhold = 100
 
 def get_all_files(my_path=account_names_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
@@ -40,37 +39,34 @@ def generateDataset(input_filename):
     Lines = file.readlines()
     #print(Lines)
     print ('scrapping...')
-    interest = ""
+    interest = input_filename
     for line in Lines:
-        if re.match(r"^.+:$", line): #new interest category
-            interest = line[:-1].lower()
-        else:
-            #####_________Wassim's code : works but we need to attribute how much posts we want to get
-            #account = line[:-1].split(' ')
-            # medias = instagram.get_medias(account[0], int(account[1]))
-            #####_________Tawfik's code : gets max (threshhold , user's post number)
-            account = line[:-1].split(' ')[0]
+        #####_________Wassim's code : works but we need to attribute how much posts we want to get
+        #account = line[:-1].split(' ')
+        # medias = instagram.get_medias(account[0], int(account[1]))
+        #####_________Tawfik's code : gets max (threshhold , user's post number)
+        account = line[:-1].split(' ')[0]
             
-            medias=get_medias(account,threshhold)
-            #______________________ We got Medias
-            user = {}
-            user['interest'] = interest
+        medias=get_medias(account,threshhold)
+        #______________________ We got Medias
+        user = {}
+        user['interest'] = interest
             ## Logging account 
-            print("interest : "+interest+"\n")
-            print("account name : "+account[0]+"\n")
-            for i in range(len(medias)):
+        print("interest : "+interest+"\n")
+        print("account name : "+account+"\n")
+        for i in range(len(medias)):
                 #Filling Dict
-                user['post'+str(i)] = {}
-                user['post'+str(i)]['photo_url'] = medias[i].image_high_resolution_url #high_res
-                caption = None
-                caption = deEmojify(medias[i].caption)
-                user['post'+str(i)]['caption'] = remove_hash_tags(caption)
-                user['post'+str(i)]['hashtags'] = extract_hash_tags(caption)
-                user['post'+str(i)]['comments'] = medias[i].comments_count
-                ## Logging Post Number 
-                print("post :"+str(i))
+            user['post'+str(i)] = {}
+            user['post'+str(i)]['photo_url'] = medias[i].image_high_resolution_url #high_res
+            caption = None
+            caption = deEmojify(medias[i].caption)
+            user['post'+str(i)]['caption'] = remove_hash_tags(caption)
+            user['post'+str(i)]['hashtags'] = extract_hash_tags(caption)
+            user['post'+str(i)]['comments'] = medias[i].comments_count
+            ## Logging Post Number 
+            print("post :"+str(i))
                 
-            dataset[account[0]] = user
+            dataset[account] = user
     file.close()
     return interest
 
@@ -85,8 +81,8 @@ if __name__=="__main__":
         try:
             interest=generateDataset(input_file_added_to_path)
             print("Dataset generated")
-            output_filename=interest[:len(interest)-1]+".json"
-            output_file_added_to_path=output_path+output_filename
+            output_file=input_file+".json"
+            output_file_added_to_path=output_path+output_file
             with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
                 json.dump(dataset, f, indent = 4)
     
