@@ -31,7 +31,11 @@ def generateDataset(input_filename):
             medias = instagram.get_medias(account[0], int(account[1]))
             user = {}
             user['interest'] = interest
+            ## Logging account 
+            print("interest : "+interest+"\n")
+            print("account name : "+account[0]+"\n")
             for i in range(len(medias)):
+                #Filling Dict
                 user['post'+str(i)] = {}
                 user['post'+str(i)]['photo_url'] = medias[i].image_high_resolution_url #high_res
                 caption = None
@@ -39,6 +43,9 @@ def generateDataset(input_filename):
                 user['post'+str(i)]['caption'] = remove_hash_tags(caption)
                 user['post'+str(i)]['hashtags'] = extract_hash_tags(caption)
                 user['post'+str(i)]['comments'] = medias[i].comments_count
+                ## Logging Post Number 
+                print("post :"+str(i))
+                
             dataset[account[0]] = user
     file.close()
 
