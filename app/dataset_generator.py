@@ -9,7 +9,7 @@ account_names_path="../dataset/account_names/"
 output_path="../dataset/collected_data/"
 instagram = Instagram()
 dataset = {}
-threshhold = 100
+threshhold = 3
 
 def get_all_files(my_path=account_names_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
@@ -39,7 +39,7 @@ def generateDataset(input_filename):
     Lines = file.readlines()
     #print(Lines)
     print ('scrapping...')
-    interest = input_filename
+    interest = input_filename.replace(account_names_path,'')
     for line in Lines:
         #####_________Wassim's code : works but we need to attribute how much posts we want to get
         #account = line[:-1].split(' ')
