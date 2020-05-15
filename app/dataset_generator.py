@@ -1,0 +1,103 @@
+from context import Instagram
+import pickle
+import re
+import json
+from os import listdir
+from os.path import isfile, join
+
+
+account_names_path="../dataset/account_names/"
+output_path="../dataset/collected_data/"
+instagram = Instagram()
+dataset = {}
+threshhold = 3000
+
+def get_all_files(my_path=account_names_path):
+    onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
+    return onlyfiles
+
+def extract_hash_tags(s):
+    return list(set(part[1:] for part in s.split() if part.startswith('#')))
+
+def remove_hash_tags(s):
+    return ' '.join(re.sub(" #[A-Za-z0-9_]+"," ",s).split())
+
+def deEmojify(inputString): #remove emojis
+    if(inputString):
+        return inputString.encode('ascii', 'ignore').decode('ascii')
+    return ''
+
+def get_medias(account,threshhold):
+    account_attributes = instagram.get_account(account)
+    media_count = account_attributes.media_count
+    post_number = min(media_count,threshhold)
+    print(media_count)
+    medias = instagram.get_medias(account, post_number)
+    return medias        
+
+def generateDataset(input_filename):
+    file = open(input_filename, "r", encoding = "utf-8")
+    Lines = file.readlines()
+    #print(Lines)
+    print ('scrapping...')
+    interest = ""
+    for line in Lines:
+        if re.match(r"^.+:$", line): #new interest category
+            interest = line[:-1].lower()
+        else:
+            #####_________Wassim's code : works but we need to attribute how much posts we want to get
+            #account = line[:-1].split(' ')
+            # medias = instagram.get_medias(account[0], int(account[1]))
+            #####_________Tawfik's code : gets max (threshhold , user's post number)
+            account = line[:-1].split(' ')[0]
+            
+            medias=get_medias(account,threshhold)
+            #______________________ We got Medias
+            user = {}
+            user['interest'] = interest
+            ## Logging account 
+            print("interest : "+interest+"\n")
+            print("account name : "+account[0]+"\n")
+            for i in range(len(medias)):
+                #Filling Dict
+                user['post'+str(i)] = {}
+                user['post'+str(i)]['photo_url'] = medias[i].image_high_resolution_url #high_res
+                caption = None
+                caption = deEmojify(medias[i].caption)
+                user['post'+str(i)]['caption'] = remove_hash_tags(caption)
+                user['post'+str(i)]['hashtags'] = extract_hash_tags(caption)
+                user['post'+str(i)]['comments'] = medias[i].comments_count
+                ## Logging Post Number 
+                print("post :"+str(i))
+                
+            dataset[account[0]] = user
+    file.close()
+    return interest
+
+    
+    #get_medias("technologyreview",1000)
+
+if __name__=="__main__":
+    input_files = get_all_files( )
+    for input_file in input_files :
+        input_file_added_to_path=account_names_path+input_file
+        print(input_file_added_to_path )
+        try:
+            interest=generateDataset(input_file_added_to_path)
+            print("Dataset generated")
+            output_filename=interest[:len(interest)-1]+".json"
+            output_file_added_to_path=output_path+output_filename
+            with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
+                json.dump(dataset, f, indent = 4)
+    
+        except Exception as e:
+            print(e)
+       
+
+#print(media.__dict__)
+
+
+
+#Problems:
+#high_res image always available?
+#hash tag functions testing
