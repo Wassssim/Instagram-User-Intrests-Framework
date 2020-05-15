@@ -48,13 +48,16 @@ def generateDataset(input_filename):
                 
             dataset[account[0]] = user
     file.close()
+    return interest
 
 
 try:
-    generateDataset("account_names.txt")
+    interest=generateDataset("account_names.txt")
     print("Dataset generated")
-    with open('data.json', 'w', encoding='utf-8') as f:
+    filename=interest[:len(interest)-1]+".json"
+    with open(filename, 'w', encoding='utf-8') as f:
         json.dump(dataset, f, indent = 4)
+    
 except Exception as e:
     print(e)
 

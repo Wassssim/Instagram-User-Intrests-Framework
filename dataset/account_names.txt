@@ -1,3 +1,2 @@
 Technology:
-technologyreview 900
-futurism 3000
+technologyreview 4
