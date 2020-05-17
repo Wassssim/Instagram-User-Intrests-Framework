@@ -39,7 +39,7 @@ def get_medias(account,threshhold):
         post_number = min(media_count,threshhold)
         print(media_count)
         medias = instagram.get_medias(account, post_number)
-        sleep(30)
+        #sleep(30)
         return medias
     except Exception as e:
         print(e)
