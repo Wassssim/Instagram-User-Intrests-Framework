@@ -1,6 +1,7 @@
 from my_credantials import path_to_cache_folder
 from context import Instagram # pylint: disable=no-name-in-module
 import urllib.request
+account_flag = 0
 
 connection_pool={
     "b43a9c43e2":"b43a9c43e2@emailmonkey.club",
@@ -8,15 +9,19 @@ connection_pool={
     "999efb85d6":"999efb85d6@emailmonkey.club"
 }
 
-account_flag=0
 
-def get_account(account_flag=account_flag):
+def get_account():
     #
     # username,password=connection_pool.values()[0]
-    print(account_flag)
-    print(connection_pool.values())
+    global account_flag
+    #print(account_flag)
+    usernames=list(connection_pool.keys())
+    passwords=list(connection_pool.values())
+    #print(keys)
+    username=usernames[account_flag]
+    password=passwords[account_flag]
     account_flag=(account_flag+1)%3
-    #return username,password
+    return username,password
 
 def connect(username,password,path_to_cache_folder):
     instagram = Instagram()
@@ -24,9 +29,9 @@ def connect(username,password,path_to_cache_folder):
     instagram = Instagram()
     return instagram
 if __name__=="__main__":
+    #get_account()
     for i in range (0,6):
-        get_account()
-    #    print (get_account())
+        print (get_account())
     """
     instagram=connect()
     account = instagram.get_account('kevin')
