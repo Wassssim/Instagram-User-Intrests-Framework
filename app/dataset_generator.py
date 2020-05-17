@@ -13,7 +13,7 @@ import pandas as pd
 account_names_path="../dataset/account_names/"
 output_path="../dataset/collected_data/"
 instagram = Instagram()
-threshhold = 3
+threshhold = 3000
 columns = {"photo_url": 0, "captions": 1, "hashtags": 2, "interest": 3}
 data = []
 
@@ -39,6 +39,7 @@ def get_medias(account,threshhold):
         post_number = min(media_count,threshhold)
         print(media_count)
         medias = instagram.get_medias(account, post_number)
+        sleep(30)
         return medias
     except Exception as e:
         print(e)
@@ -89,8 +90,8 @@ if __name__=="__main__":
             print(df.info())
             output_file=input_file+".csv"
             output_file_added_to_path=output_path+output_file
-            with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
-                df.to_csv(output_file_added_to_path)
+            #with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
+            df.to_csv(output_file_added_to_path)
         except Exception as e:
             print(e)
 
