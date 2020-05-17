@@ -1,6 +1,7 @@
 from my_credantials import path_to_cache_folder
 from context import Instagram # pylint: disable=no-name-in-module
 import urllib.request
+import time
 account_flag = 0
 
 connection_pool={
@@ -23,15 +24,23 @@ def get_account():
     account_flag=(account_flag+1)%3
     return username,password
 
-def connect(username,password,path_to_cache_folder):
+def connect():
+    global account_flag
+    username , password=get_account()
+    print(account_flag)
     instagram = Instagram()
     instagram.with_credentials(username, password, path_to_cache_folder)
     instagram = Instagram()
+    print("connected")
     return instagram
+
+
 if __name__=="__main__":
     #get_account()
     for i in range (0,6):
-        print (get_account())
+        connect()
+        time.sleep(3)
+
     """
     instagram=connect()
     account = instagram.get_account('kevin')
