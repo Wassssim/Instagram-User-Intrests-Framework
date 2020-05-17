@@ -27,12 +27,16 @@ def deEmojify(inputString): #remove emojis
     return ''
 
 def get_medias(account,threshhold):
-    account_attributes = instagram.get_account(account)
-    media_count = account_attributes.media_count
-    post_number = min(media_count,threshhold)
-    print(media_count)
-    medias = instagram.get_medias(account, post_number)
-    return medias        
+    try :
+        account_attributes = instagram.get_account(account)
+        media_count = account_attributes.media_count
+        post_number = min(media_count,threshhold)
+        print(media_count)
+        medias = instagram.get_medias(account, post_number)
+        return medias
+    except Exception as e:
+        print(e)
+        return None
 
 def generateDataset(input_filename):
     file = open(input_filename, "r", encoding = "utf-8")
@@ -45,23 +49,23 @@ def generateDataset(input_filename):
             
         medias=get_medias(account,threshhold)
         #______________________ We got Medias
-        user = {}
-        user['interest'] = interest
+        if medias!=None :
+            user = {}
+            user['interest'] = interest
             ## Logging account 
-        print("interest : "+interest+"\n")
-        print("account name : "+account+"\n")
-        for i in range(len(medias)):
+            print("interest : "+interest+"\n")
+            print("account name : "+account+"\n")
+            for i in range(len(medias)):
                 #Filling Dict
-            user['post'+str(i)] = {}
-            user['post'+str(i)]['photo_url'] = medias[i].image_high_resolution_url #high_res
-            caption = None
-            caption = deEmojify(medias[i].caption)
-            user['post'+str(i)]['caption'] = remove_hash_tags(caption)
-            user['post'+str(i)]['hashtags'] = extract_hash_tags(caption)
-            user['post'+str(i)]['comments'] = medias[i].comments_count
-            ## Logging Post Number 
-            print("post :"+str(i))
-                
+                user['post'+str(i)] = {}
+                user['post'+str(i)]['photo_url'] = medias[i].image_high_resolution_url #high_res
+                caption = None
+                caption = deEmojify(medias[i].caption)
+                user['post'+str(i)]['caption'] = remove_hash_tags(caption)
+                user['post'+str(i)]['hashtags'] = extract_hash_tags(caption)
+                user['post'+str(i)]['comments'] = medias[i].comments_count
+                ## Logging Post Number 
+                print("post :"+str(i))
             dataset[account] = user
     file.close()
     return interest
@@ -79,7 +83,7 @@ if __name__=="__main__":
             output_file_added_to_path=output_path+output_file
             with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
                 json.dump(dataset, f, indent = 4)
-    
+            dataset={}
         except Exception as e:
             print(e)
 
