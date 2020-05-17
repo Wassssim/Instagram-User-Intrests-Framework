@@ -67,5 +67,6 @@ def __get_account_by_username(username,number_of_medias):
     account = media.owner
     print(account)
 
-
-__get_account_by_username("natgeo",1000)
+if __name__=="__main__":
+    instagram=Logger.getInstance().instagram
+    account = instagram.get_account('kevin')
