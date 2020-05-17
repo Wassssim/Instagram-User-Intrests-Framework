@@ -15,9 +15,10 @@ def remove_hashtags():
 
 def clean_data():
     df=retrive_data(filename)
-    #print(df.captions.apply(ht.remove_hashtags(lambda x : remove_hashtags(str(x)))))
-    df.captions.str.findall(r'#.*?(?=\s|$)')
-
+    #print(df.captions.apply(lambda x : remove_hashtags(str(x))))
+    missing_hashtags=df.captions.str.findall(r'#.*?(?=\s|$)')
+    print(missing_hashtags)
+    print(df.hashtags   )
 if __name__=="__main__":
     clean_data()
     
