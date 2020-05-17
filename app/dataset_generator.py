@@ -4,12 +4,18 @@ import re
 import json
 from os import listdir
 from os.path import isfile, join
+from time import sleep
+
+
+
+
 
 account_names_path="../dataset/account_names/"
 output_path="../dataset/collected_data/"
 instagram = Instagram()
 dataset = {}
-threshhold = 3
+threshhold = 2000
+
 
 def get_all_files(my_path=account_names_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
@@ -72,7 +78,7 @@ def generateDataset(input_filename):
 
 if __name__=="__main__":
     #input_files = get_all_files( )
-    input_files=['Technology']
+    input_files=get_all_files()
     for input_file in input_files :
         input_file_added_to_path=account_names_path+input_file
         print(input_file_added_to_path )
