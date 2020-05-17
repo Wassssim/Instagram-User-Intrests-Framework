@@ -7,8 +7,8 @@ from os.path import isfile, join
 from time import sleep
 import pandas as pd
 from caption_formater import extract_hash_tags , remove_hash_tags , deEmojify
-
-
+from logger import connect
+import igramscraper
 account_names_path="../dataset/account_names/"
 output_path="../dataset/collected_data/"
 instagram = Instagram()
@@ -21,6 +21,7 @@ def get_all_files(my_path):
     return onlyfiles
 
 def get_medias(account,threshhold):
+    global instagram
     try :
         account_attributes = instagram.get_account(account)
         media_count = account_attributes.media_count
@@ -29,6 +30,21 @@ def get_medias(account,threshhold):
         medias = instagram.get_medias(account, post_number)
         #sleep(30)
         return medias
+    except igramscraper.exception.instagram_exception.InstagramException :
+        try:
+            instagram=connect()  
+            account_attributes = instagram.get_account(account)
+            media_count = account_attributes.media_count
+            post_number = min(media_count,threshhold)
+            print(media_count)
+            medias = instagram.get_medias(account, post_number)
+            #sleep(30)
+            
+            return medias 
+        except Exception as e:
+            print(e)
+            return None
+
     except Exception as e:
         print(e)
         return None
@@ -70,7 +86,8 @@ def generateDataset(input_filename):
 
 if __name__=="__main__":
     #input_files = get_all_files()
-    input_files = get_all_files(account_names_path)
+    #input_files = get_all_files(account_names_path)
+    #Use Second Line In case you want to get all files
     input_files=["technology"]
     for input_file in input_files :
         input_file_added_to_path=account_names_path+input_file
