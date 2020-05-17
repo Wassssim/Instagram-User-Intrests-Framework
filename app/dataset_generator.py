@@ -6,8 +6,7 @@ from os import listdir
 from os.path import isfile, join
 from time import sleep
 import pandas as pd
-
-
+from caption_formater import extract_hash_tags , remove_hash_tags , deEmojify
 
 
 account_names_path="../dataset/account_names/"
@@ -17,21 +16,9 @@ threshhold = 3000
 columns = {"photo_url": 0, "captions": 1, "hashtags": 2, "interest": 3}
 data = []
 
-def get_all_files(my_path=account_names_path):
+def get_all_files(my_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
     return onlyfiles
-
-def extract_hash_tags(s):
-    return list(set(part[1:] for part in s.split() if part.startswith('#')))
-
-def remove_hash_tags(s):
-    s = re.sub("([^A-Za-z0-9]+#|^#)"," #",s)
-    return ' '.join(re.sub(" #[A-Za-z0-9_]+"," ",s).split())
-
-def deEmojify(inputString): #remove emojis
-    if(inputString):
-        return inputString.encode('ascii', 'ignore').decode('ascii')
-    return ''
 
 def get_medias(account,threshhold):
     try :
@@ -52,6 +39,7 @@ def generateDataset(input_filename):
     #print(Lines)
     print ('scrapping...')
     interest = input_filename.replace(account_names_path,'')
+
     for line in Lines:
         account = line[:-1].split(' ')[0]  
         post = []
@@ -61,6 +49,8 @@ def generateDataset(input_filename):
             ## Logging account 
             print("interest : "+interest+"\n")
             print("account name : "+account+"\n")
+            
+            
             for i in range(len(medias)):
                 #Filling Dict
                 post = [0 for i in columns.keys()]
@@ -79,7 +69,8 @@ def generateDataset(input_filename):
     return interest
 
 if __name__=="__main__":
-    #input_files = get_all_files( )
+    #input_files = get_all_files()
+    input_files = get_all_files(account_names_path)
     input_files=["technology"]
     for input_file in input_files :
         input_file_added_to_path=account_names_path+input_file

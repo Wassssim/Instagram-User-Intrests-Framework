@@ -1,11 +1,23 @@
 import json
 import pandas as pd
-file = 'Fitness.json'
-with open(file) as train_file:
-    dict_train = json.load(train_file)
+import hashtags as ht
+filename = 'technology.csv'
 
-# converting json dataset from dictionary to dataframe
-train = pd.DataFrame.from_dict(dict_train, orient='index')
-train.reset_index(level=0, inplace=True)
-print(train)
-train.to_csv('Fitness.csv',index=False,header=True)
+def retrive_data(filename):
+    try:
+        df=pd.read_csv(filename)
+        return df
+    except Exception as e:
+            print(e)
+
+def remove_hashtags():
+    pass
+
+def clean_data():
+    df=retrive_data(filename)
+    #print(df.captions.apply(ht.remove_hashtags(lambda x : remove_hashtags(str(x)))))
+    df.captions.str.findall(r'#.*?(?=\s|$)')
+
+if __name__=="__main__":
+    clean_data()
+    
