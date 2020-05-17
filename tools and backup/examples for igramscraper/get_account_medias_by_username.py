@@ -1,14 +1,20 @@
 from context import Instagram # pylint: disable=no-name-in-module
+from image import Image
 
 # If account is public you can query Instagram without auth
-
+#this files is made for downloading exact number of user's images
 instagram = Instagram()
+username="catpipie2"
+number_of_images=7
+medias = instagram.get_medias(username,number_of_images)
+for media in medias:
+    media = instagram.get_media_by_url(media.link)
+    image =Image(media) 
+    image.saveImage()
 
-medias = instagram.get_medias("kevin", 25)
-media = medias[6]
 
-print(media)
-account = media.owner
+print(medias[6])
+account = medias[6].owner
 print(account)
 # print('Username', account.username)
 # print('Full Name', account.full_name)
