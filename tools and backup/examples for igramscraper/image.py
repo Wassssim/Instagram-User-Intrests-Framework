@@ -1,6 +1,8 @@
 import os
 import urllib.request
 
+'''this class is used to save image locally'''
+
 class Image:
     def __init__(self,media):
       self.media = media
