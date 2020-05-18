@@ -20,7 +20,7 @@ def get_all_files(my_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
     return onlyfiles
 
-def get_medias(account,threshhold):
+def get_medias(account,threshhold,current_index):
     global instagram
     try :
         account_attributes = instagram.get_account(account)
@@ -29,17 +29,21 @@ def get_medias(account,threshhold):
         print(media_count)
         medias = instagram.get_medias(account, post_number)
         #sleep(30)
+        '''if all medias are dowloaded initialise the start_index in checkpoint file'''
+        checkpoint_file=open('./checkpoint.txt','w')
+        current_index=str(0)
+        checkpoint_file.write(current_index)
         return medias
     
     except igramscraper.exception.instagram_exception.InstagramException :
         """
-            when recieving this exception you should get the account name
-            push it into a python list and save it into a pickle
-            pickles are just fancy words for files
+            when recieving this exception we save the current_index which represents 
+            the last non processed index so we process it in next iteration
 
         """
-
         #YOUR CODE HERE
+        checkpoint_file=open('./checkpoint.txt','w')
+        checkpoint_file.write(current_index)
         
         pass 
 
@@ -66,17 +70,18 @@ def get_medias(account,threshhold):
             return None
     """
     
-def generateDataset(input_filename):
+def generateDataset(input_filename,start_index):
     file = open(input_filename, "r", encoding = "utf-8")
     Lines = file.readlines()
     #print(Lines)
     print ('scrapping...')
     interest = input_filename.replace(account_names_path,'')
-
-    for line in Lines:
+    current_index=start_index
+    for line in Lines[start_index:]:
         account = line[:-1].split(' ')[0]  
         post = []
-        medias=get_medias(account,threshhold)
+        medias=get_medias(account,threshhold,current_index)
+        current_index=current_index+1
         #______________________ We got Medias
         if medias!=None:
             ## Logging account 
@@ -98,6 +103,7 @@ def generateDataset(input_filename):
                 print("post :"+str(i))
                 data.append(post)
             #dataset[account] = user
+            
     file.close()
     return interest
 
@@ -105,12 +111,28 @@ if __name__=="__main__":
     #input_files = get_all_files()
     #input_files = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
-    input_files=["Wellness"]
+    #input_files=["shopping and  fashion"]
+    ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
+    checkPoint_file = open('./checkpoint.txt', "r", encoding = "utf-8")
+    Lines = checkPoint_file.readlines()
+    start_index=0
+    if Lines!=None:
+        '''get right index from checkpoint file'''
+        start_index=int(Lines[0])
+        
+    print(start_index)
+    input_files=["shopping and  fashion"]
+    print(input_files)
+   
     for input_file in input_files :
+        
+        
         input_file_added_to_path=account_names_path+input_file
         print(input_file_added_to_path )
         try:
-            interest=generateDataset(input_file_added_to_path)
+            
+            interest=generateDataset(input_file_added_to_path,start_index)
+        
             df = pd.DataFrame(data=data, columns=columns)
             print("Dataset generated")
             print(df.info())
@@ -118,9 +140,9 @@ if __name__=="__main__":
             output_file_added_to_path=output_path+output_file
             #with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
             df.to_csv(output_file_added_to_path)
+
         except Exception as e:
             print(e)
-
 
 #Problems:
 #high_res image always available?
