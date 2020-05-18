@@ -1,3 +1,4 @@
+import re
 def extract_hash_tags(s):
     return list(set(part[1:] for part in s.split() if part.startswith('#')))
 
