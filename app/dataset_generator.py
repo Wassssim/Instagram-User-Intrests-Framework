@@ -20,21 +20,17 @@ def get_all_files(my_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
     return onlyfiles
 
-def get_medias(account,threshhold,current_index):
+def get_medias(account,threshhold,current_file_start_index,current_index):
     global instagram
     try :
+        
         account_attributes = instagram.get_account(account)
         media_count = account_attributes.media_count
         post_number = min(media_count,threshhold)
         print(media_count)
         medias = instagram.get_medias(account, post_number)
         #sleep(30)
-        '''if all medias are dowloaded initialise the start_index in checkpoint file'''
-        checkpoint_file=open('./checkpoint.txt','w')
-        current_index=str(0)
-        checkpoint_file.write(current_index)
         return medias
-    
     except igramscraper.exception.instagram_exception.InstagramException :
         """
             when recieving this exception we save the current_index which represents 
@@ -43,8 +39,11 @@ def get_medias(account,threshhold,current_index):
         """
         #YOUR CODE HERE
         checkpoint_file=open('./checkpoint.txt','w')
+        checkpoint_file.truncate(0)
+        current_file_start_index=str(current_file_start_index)+'\n'
+        current_index=str(current_index)
+        checkpoint_file.write(current_file_start_index)
         checkpoint_file.write(current_index)
-        
         pass 
 
     except Exception as e:
@@ -70,20 +69,32 @@ def get_medias(account,threshhold,current_index):
             return None
     """
     
-def generateDataset(input_filename,start_index):
+def generateDataset(input_filename,current_file_start_index,start_index):
     file = open(input_filename, "r", encoding = "utf-8")
     Lines = file.readlines()
     #print(Lines)
     print ('scrapping...')
     interest = input_filename.replace(account_names_path,'')
     current_index=start_index
+    
+    if int(current_index)>= len(Lines):
+        current_file_start_index=current_file_start_index+1
+        current_index=str(0)
+        current_file_start_index=str(current_file_start_index)+'\n'
+        checkpoint_file=open('./checkpoint.txt','w')
+        checkpoint_file.truncate(0)
+        checkpoint_file.write(current_file_start_index)
+        checkpoint_file.write(current_index)
+        return 
+    
+    
     for line in Lines[start_index:]:
         account = line[:-1].split(' ')[0]  
         post = []
-        medias=get_medias(account,threshhold,current_index)
-        current_index=current_index+1
+        medias=get_medias(account,threshhold,current_file_start_index,current_index)
         #______________________ We got Medias
         if medias!=None:
+            current_index=current_index+1
             ## Logging account 
             print("interest : "+interest+"\n")
             print("account name : "+account+"\n")
@@ -103,36 +114,59 @@ def generateDataset(input_filename,start_index):
                 print("post :"+str(i))
                 data.append(post)
             #dataset[account] = user
+        else:
+            break
             
+    if int(current_index)>= len(Lines):
+        '''if all medias of this interest are dowloaded initialise 
+            the start_index and file_start_index in checkpoint file'''
+            
+        current_file_start_index=current_file_start_index+1
+        current_index=str(0)
+        current_file_start_index=str(current_file_start_index)+'\n'
+        checkpoint_file=open('./checkpoint.txt','w')
+        checkpoint_file.truncate(0)
+        checkpoint_file.write(current_file_start_index)
+        checkpoint_file.write(current_index)
+    
     file.close()
     return interest
 
 if __name__=="__main__":
     #input_files = get_all_files()
-    #input_files = get_all_files(account_names_path)
+    input_files = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
     checkPoint_file = open('./checkpoint.txt', "r", encoding = "utf-8")
     Lines = checkPoint_file.readlines()
+    file_start_index=0
     start_index=0
-    if Lines!=None:
-        '''get right index from checkpoint file'''
-        start_index=int(Lines[0])
-        
+    if len(Lines)==2:
+        '''get file_start_undex and start_index from checkpoint file'''
+        file_start_index=int(Lines[0])
+        start_index=int(Lines[1])
+    print(file_start_index)   
     print(start_index)
-    input_files=["shopping and  fashion"]
-    print(input_files)
-   
-    for input_file in input_files :
-        
+    #input_files=["shopping and  fashion"]
+    #print(input_files)
+    current_file_start_index=file_start_index
+    if current_file_start_index >= len(input_files):
+        exit()
+    for input_file in input_files[file_start_index:] :
         
         input_file_added_to_path=account_names_path+input_file
         print(input_file_added_to_path )
         try:
+            '''  if it's not the first iteration we should retrieve start_index '''
+            checkPoint_file = open('./checkpoint.txt', "r", encoding = "utf-8")
+            Lines = checkPoint_file.readlines()
+            start_index=0
+            if len(Lines)==2:
+                start_index=Lines[1]
+            start_index=int(start_index)
+            interest=generateDataset(input_file_added_to_path,current_file_start_index,start_index)
             
-            interest=generateDataset(input_file_added_to_path,start_index)
-        
             df = pd.DataFrame(data=data, columns=columns)
             print("Dataset generated")
             print(df.info())
@@ -140,9 +174,11 @@ if __name__=="__main__":
             output_file_added_to_path=output_path+output_file
             #with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
             df.to_csv(output_file_added_to_path)
-
+            
         except Exception as e:
             print(e)
+    
+        current_file_start_index=current_file_start_index+1
 
 #Problems:
 #high_res image always available?
