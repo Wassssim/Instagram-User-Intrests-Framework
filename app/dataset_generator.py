@@ -30,6 +30,19 @@ def get_medias(account,threshhold):
         medias = instagram.get_medias(account, post_number)
         #sleep(30)
         return medias
+    
+    except igramscraper.exception.instagram_exception.InstagramException :
+        """
+            when recieving this exception you should get the account name
+            push it into a python list and save it into a pickle
+            pickles are just fancy words for files
+
+        """
+
+        #YOUR CODE HERE
+        
+        pass 
+
     except Exception as e:
         print(e)
         return None
