@@ -69,7 +69,20 @@ def get_medias(account,threshhold,current_file_start_index,current_index):
             return None
     """
     
-def generateDataset(input_filename,current_file_start_index,start_index):
+
+
+def create_post(medias, columns):
+    post = [0 for i in columns.keys()]
+    post[columns['interest']] = str(interest).lower()
+    post[columns['photo_url']] = str(medias[i].image_high_resolution_url) #high_res
+    caption = None
+    caption = deEmojify(medias[i].caption)
+    post[columns['captions']] = remove_hash_tags(caption)
+    post[columns['hashtags']] = extract_hash_tags(caption)
+    return post
+
+
+def generateDataset(input_filename,start_index):
     file = open(input_filename, "r", encoding = "utf-8")
     Lines = file.readlines()
     #print(Lines)
@@ -97,19 +110,10 @@ def generateDataset(input_filename,current_file_start_index,start_index):
             current_index=current_index+1
             ## Logging account 
             print("interest : "+interest+"\n")
-            print("account name : "+account+"\n")
-            
-            
+            print("account name : "+account+"\n")            
             for i in range(len(medias)):
-                #Filling Dict
-                post = [0 for i in columns.keys()]
-                post[columns['interest']] = str(interest).lower()
-                post[columns['photo_url']] = str(medias[i].image_high_resolution_url) #high_res
-                caption = None
-                caption = deEmojify(medias[i].caption)
-                post[columns['captions']] = remove_hash_tags(caption)
-                post[columns['hashtags']] = extract_hash_tags(caption)
-                #user['post'+str(i)]['comments'] = medias[i].comments_count
+                #Creating a new row
+                post = create_post(medias, columns)
                 ## Logging Post Number 
                 print("post :"+str(i))
                 data.append(post)
