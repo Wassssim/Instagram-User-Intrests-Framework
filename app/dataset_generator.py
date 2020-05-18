@@ -30,6 +30,13 @@ def get_medias(account,threshhold):
         medias = instagram.get_medias(account, post_number)
         #sleep(30)
         return medias
+    except Exception as e:
+        print(e)
+        return None
+    """
+        ---Here We tried Handling this exception by creating a session pool 
+        It didn't work
+
     except igramscraper.exception.instagram_exception.InstagramException :
         try:
             instagram=connect()  
@@ -44,11 +51,8 @@ def get_medias(account,threshhold):
         except Exception as e:
             print(e)
             return None
-
-    except Exception as e:
-        print(e)
-        return None
-
+    """
+    
 def generateDataset(input_filename):
     file = open(input_filename, "r", encoding = "utf-8")
     Lines = file.readlines()
