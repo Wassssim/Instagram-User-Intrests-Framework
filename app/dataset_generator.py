@@ -9,6 +9,7 @@ import pandas as pd
 from caption_formater import extract_hash_tags , remove_hash_tags , deEmojify
 from logger import connect
 import igramscraper
+from retrive_data import get_dataframe
 account_names_path="../dataset/account_names/"
 output_path="../dataset/collected_data/"
 instagram = Instagram()
@@ -175,11 +176,24 @@ if __name__=="__main__":
             start_index=int(start_index)
             interest=generateDataset(input_file_added_to_path,current_file_start_index,start_index)
             
-            df = pd.DataFrame(data=data, columns=columns)
-            print("Dataset generated")
-            print(df.info())
             output_file=input_file+".csv"
             output_file_added_to_path=output_path+output_file
+            #____
+            # This should be a function
+            if (isfile(output_file_added_to_path)):
+                df = get_dataframe(output_file_added_to_path)
+                """
+                todo : check if appending works  
+                
+                """
+                new_data = pd.DataFrame(data=data, columns=columns)
+                df.append(new_data, ignore_index = True)
+
+            else :
+                df = pd.DataFrame(data=data, columns=columns)
+            #____
+            print("Dataset generated")
+            print(df.info())
             #with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
             df.to_csv(output_file_added_to_path)
             
