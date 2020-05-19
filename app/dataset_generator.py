@@ -154,15 +154,8 @@ def make_output_file(input_file):
     output_file_added_to_path=output_path+output_file
     return output_file_added_to_path        
 
-          
-if __name__=="__main__":
-    #input_files = get_all_files()
-    #input_files = get_all_files(account_names_path)
-    input_files = ['Entertainment']
-    #Use Second Line In case you want to get all files
-    #input_files=["shopping and  fashion"]
-    ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
-    checkPoint_file = open('./checkpoint.txt', "r", encoding = "utf-8")
+def load_checkpoint():
+    checkPoint_file = open('./checkpoint', "r", encoding = "utf-8")
     Lines = checkPoint_file.readlines()
     file_start_index=0
     start_index=0
@@ -172,6 +165,16 @@ if __name__=="__main__":
         start_index=int(Lines[1])
     print(file_start_index)   
     print(start_index)
+    return file_start_index,start_index
+      
+if __name__=="__main__":
+    #input_files = get_all_files()
+    #input_files = get_all_files(account_names_path)
+    input_files = ['Entertainment']
+    #Use Second Line In case you want to get all files
+    #input_files=["shopping and  fashion"]
+    ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
+    file_start_index,start_index=load_checkpoint()
     #input_files=["shopping and  fashion"]
     #print(input_files)
     current_file_start_index=file_start_index
@@ -183,7 +186,7 @@ if __name__=="__main__":
         print(input_file_added_to_path )
         try:
             '''  if it's not the first iteration we should retrieve start_index '''
-            checkPoint_file = open('./checkpoint.txt', "r", encoding = "utf-8")
+            checkPoint_file = open('./checkpoint', "r", encoding = "utf-8")
             Lines = checkPoint_file.readlines()
             start_index=0
             if len(Lines)==2:
