@@ -86,7 +86,7 @@ def create_post(media, columns, interest):
 
 
 
-def generateDataset(input_filename,current_file_start_index,start_index):
+def generate_dataframe(input_filename,current_file_start_index,start_index):
     file = open(input_filename, "r", encoding = "utf-8")
     Lines = file.readlines()
     #print(Lines)
@@ -166,12 +166,12 @@ def load_checkpoint():
     print(file_start_index)   
     print(start_index)
     return file_start_index,start_index
-      
-if __name__=="__main__":
+
+def generate():
     #input_files = get_all_files()
     #input_files = get_all_files(account_names_path)
-    input_files = ['Entertainment']
     #Use Second Line In case you want to get all files
+    input_files = ['Entertainment']
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
     file_start_index,start_index=load_checkpoint()
@@ -194,8 +194,8 @@ if __name__=="__main__":
             start_index=int(start_index)
             interest=generateDataset(input_file_added_to_path,current_file_start_index,start_index)
             
-            ouput_file=make_output_file(input_file)
-            df=laod_data_into_dataframe(start_index,output_file)
+            output_file=make_output_file(input_file)
+            df=laod_data_into_dataframe(start_index, output_file )
             print("Dataset generated")
             print(df.info())
             #with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
@@ -206,6 +206,9 @@ if __name__=="__main__":
     
         current_file_start_index=current_file_start_index+1
 
+
+if __name__=="__main__":
+    generate()
 #Problems:
 #high_res image always available?
 #hash tag functions testing
