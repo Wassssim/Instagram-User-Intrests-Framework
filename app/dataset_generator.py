@@ -25,7 +25,6 @@ def get_all_files(my_path):
     
 
 def get_medias(account,threshhold,current_file_start_index,current_index):
-    global instagram
     try :
         
         account_attributes = instagram.get_account(account)
@@ -140,7 +139,22 @@ def generateDataset(input_filename,current_file_start_index,start_index):
     
     file.close()
     return interest
+def laod_data_into_dataframe(start_index,output_file_added_to_path):
+    new_dataframe = pd.DataFrame(data=data, columns=columns)
+    if (isfile(output_file_added_to_path)):
+        df = get_dataframe(output_file_added_to_path)
+        df.append(new_dataframe, ignore_index = True)
+        return df
+    else :
+        return new_dataframe
 
+
+def make_output_file(input_file):
+    output_file=input_file+".csv"
+    output_file_added_to_path=output_path+output_file
+    return output_file_added_to_path        
+
+          
 if __name__=="__main__":
     #input_files = get_all_files()
     #input_files = get_all_files(account_names_path)
@@ -177,26 +191,12 @@ if __name__=="__main__":
             start_index=int(start_index)
             interest=generateDataset(input_file_added_to_path,current_file_start_index,start_index)
             
-            output_file=input_file+".csv"
-            output_file_added_to_path=output_path+output_file
-            #____
-            # This should be a function
-            if (start_index!=0) and (isfile(output_file_added_to_path)):
-                df = get_dataframe(output_file_added_to_path)
-                """
-                todo : check if appending works  
-                
-                """
-                new_data = pd.DataFrame(data=data, columns=columns)
-                df.append(new_data, ignore_index = True)
-
-            else :
-                df = pd.DataFrame(data=data, columns=columns)
-            #____
+            ouput_file=make_output_file(input_file)
+            df=laod_data_into_dataframe(start_index,output_file)
             print("Dataset generated")
             print(df.info())
             #with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
-            df.to_csv(output_file_added_to_path)
+            df.to_csv(output_file)
             
         except Exception as e:
             print(e)
