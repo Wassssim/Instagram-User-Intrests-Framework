@@ -75,19 +75,19 @@ def get_medias(account,threshhold,current_file_start_index,current_index):
     
 
 
-def create_post(medias, columns):
+def create_post(media, columns, interest):
     post = [0 for i in columns.keys()]
     post[columns['interest']] = str(interest).lower()
-    post[columns['photo_url']] = str(medias[i].image_high_resolution_url) #high_res
+    post[columns['photo_url']] = str(media.image_high_resolution_url) #high_res
     caption = None
-    caption = deEmojify(medias[i].caption)
+    caption = deEmojify(media.caption)
     post[columns['captions']] = remove_hash_tags(caption)
     post[columns['hashtags']] = extract_hash_tags(caption)
     return post
 
 
 
-def generateDataset(input_filename,start_index):
+def generateDataset(input_filename,current_file_start_index,start_index):
     file = open(input_filename, "r", encoding = "utf-8")
     Lines = file.readlines()
     #print(Lines)
@@ -118,7 +118,7 @@ def generateDataset(input_filename,start_index):
             print("account name : "+account+"\n")            
             for i in range(len(medias)):
                 #Creating a new row
-                post = create_post(medias, columns)
+                post = create_post(medias[i], columns, interest)
                 ## Logging Post Number 
                 print("post :"+str(i))
                 data.append(post)
@@ -143,7 +143,8 @@ def generateDataset(input_filename,start_index):
 
 if __name__=="__main__":
     #input_files = get_all_files()
-    input_files = get_all_files(account_names_path)
+    #input_files = get_all_files(account_names_path)
+    input_files = ['Entertainment']
     #Use Second Line In case you want to get all files
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''

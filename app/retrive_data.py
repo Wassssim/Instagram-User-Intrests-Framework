@@ -1,6 +1,5 @@
 import json
 import pandas as pd
-import hashtags as ht
 import re
 
 def get_dataframe(filename):
