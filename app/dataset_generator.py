@@ -117,13 +117,14 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
             ## Logging account 
             print("interest : "+interest+"\n")
             print("account name : "+account+"\n")            
-            for i in range(len(medias)):
-                #Creating a new row
-                post = create_post(medias[i], columns, interest)
-                ## Logging Post Number 
-                print("post :"+str(i))
-                data.append(post)
-            #dataset[account] = user
+            with progressbar.ProgressBar(max_value=len(medias)) as bar:
+                for i in range(len(medias)):
+                    #Creating a new row
+                    post = create_post(medias[i], columns, interest)
+                    data.append(post)
+                    ## updating bar
+                    bar.update(i)
+                #dataset[account] = user
         else:
             break
             
@@ -165,27 +166,28 @@ def load_checkpoint():
         '''get file_start_undex and start_index from checkpoint file'''
         file_start_index=int(Lines[0])
         start_index=int(Lines[1])
-    print(file_start_index)   
-    print(start_index)
+    print("loading checkpoint")
+    print("your file index from the list "+str(file_start_index))   
+    print("your start index in file "+str(start_index))
     return file_start_index,start_index
 
 def generate():
     #input_files = get_all_files()
     #input_files = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
-    input_files = ['Entertainment']
+    input_filenames = ['Entertainment']
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
     file_start_index,start_index=load_checkpoint()
     #input_files=["shopping and  fashion"]
     #print(input_files)
     current_file_start_index=file_start_index
-    if current_file_start_index >= len(input_files):
+    if current_file_start_index >= len(input_filenames):
         exit()
-    for input_file in input_files[file_start_index:] :
+    for input_filename in input_filenames[file_start_index:] :
         
-        input_file_added_to_path=account_names_path+input_file
-        print(input_file_added_to_path )
+        input_file=account_names_path+input_filename
+        print("input file :"+input_file )
         try:
             '''  if it's not the first iteration we should retrieve start_index '''
             checkPoint_file = open('./checkpoint', "r", encoding = "utf-8")
@@ -194,9 +196,9 @@ def generate():
             if len(Lines)==2:
                 start_index=Lines[1]
             start_index=int(start_index)
-            interest=generate_dataframe(input_file_added_to_path,current_file_start_index,start_index)
+            interest=generate_dataframe(input_file,current_file_start_index,start_index)
             
-            output_file=make_output_file(input_file)
+            output_file=make_output_file(input_filename)
             df=laod_data_into_dataframe(start_index, output_file )
             print("Dataset generated")
             print(df.info())
@@ -211,7 +213,11 @@ def generate():
 
 if __name__=="__main__":
     generate()
-    
+    """
+    #__testing progressbar
+    for i in progressbar.progressbar(range(100)):
+        sleep(0.02)
+    """
 #Problems:
 #high_res image always available?
 #hash tag functions testing
