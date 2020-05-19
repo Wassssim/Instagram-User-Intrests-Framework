@@ -10,7 +10,6 @@ from caption_formater import extract_hash_tags , remove_hash_tags , deEmojify
 from logger import connect
 import igramscraper
 from retrive_data import get_dataframe
-import progressbar
 
 account_names_path="../dataset/account_names/"
 output_path="../dataset/collected_data/"
@@ -36,12 +35,13 @@ def get_medias(account,threshhold,current_file_start_index,current_index):
         medias = instagram.get_medias(account, post_number)
         #sleep(30)
         return medias
-    except igramscraper.exception.instagram_exception.InstagramException :
+    except igramscraper.exception.instagram_exception.InstagramException as e :
         """
             when recieving this exception we save the current_index which represents 
             the last non processed index so we process it in next iteration
 
         """
+        print(e)
         #YOUR CODE HERE
         checkpoint_file=open('./checkpoint.txt','w')
         checkpoint_file.truncate(0)
@@ -144,9 +144,9 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
     return interest
 def laod_data_into_dataframe(start_index,output_file_added_to_path):
     new_dataframe = pd.DataFrame(data=data, columns=columns)
-    if (isfile(output_file_added_to_path)):
+    if (start_index!=0) and (isfile(output_file_added_to_path)):
         df = get_dataframe(output_file_added_to_path)
-        df.append(new_dataframe, ignore_index = True)
+        df = df.append(new_dataframe, ignore_index = True)
         return df
     else :
         return new_dataframe
