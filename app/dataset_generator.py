@@ -181,7 +181,7 @@ if __name__=="__main__":
             output_file_added_to_path=output_path+output_file
             #____
             # This should be a function
-            if (isfile(output_file_added_to_path)):
+            if (start_index!=0) and (isfile(output_file_added_to_path)):
                 df = get_dataframe(output_file_added_to_path)
                 """
                 todo : check if appending works  
