@@ -10,6 +10,8 @@ from caption_formater import extract_hash_tags , remove_hash_tags , deEmojify
 from logger import connect
 import igramscraper
 from retrive_data import get_dataframe
+import progressbar
+
 account_names_path="../dataset/account_names/"
 output_path="../dataset/collected_data/"
 instagram = Instagram()
@@ -208,7 +210,8 @@ def generate():
 
 
 if __name__=="__main__":
-    generate()
+    #generate()
+    
 #Problems:
 #high_res image always available?
 #hash tag functions testing
