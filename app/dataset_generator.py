@@ -20,6 +20,9 @@ def get_all_files(my_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
     return onlyfiles
 
+
+    
+
 def get_medias(account,threshhold,current_file_start_index,current_index):
     global instagram
     try :
@@ -44,8 +47,8 @@ def get_medias(account,threshhold,current_file_start_index,current_index):
         current_index=str(current_index)
         checkpoint_file.write(current_file_start_index)
         checkpoint_file.write(current_index)
-        pass 
-
+        return None
+        
     except Exception as e:
         print(e)
         return None
@@ -80,6 +83,7 @@ def create_post(medias, columns):
     post[columns['captions']] = remove_hash_tags(caption)
     post[columns['hashtags']] = extract_hash_tags(caption)
     return post
+
 
 
 def generateDataset(input_filename,start_index):
