@@ -159,7 +159,7 @@ def make_output_file(input_file):
     return output_file_added_to_path        
 
 def load_checkpoint():
-    checkPoint_file = open('./checkpoint', "r", encoding = "utf-8")
+    checkPoint_file = open('./checkpoint.txt', "r", encoding = "utf-8")
     Lines = checkPoint_file.readlines()
     file_start_index=0
     start_index=0
