@@ -136,7 +136,7 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
         current_file_start_index=current_file_start_index+1
         current_index=str(0)
         current_file_start_index=str(current_file_start_index)+'\n'
-        checkpoint_file=open('./checkpoint.txt','w')
+        checkpoint_file=open('./checkpoint','w')
         checkpoint_file.truncate(0)
         checkpoint_file.write(current_file_start_index)
         checkpoint_file.write(current_index)
