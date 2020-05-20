@@ -18,6 +18,7 @@ instagram = Instagram()
 threshhold = 3000
 columns = {"photo_url": 0, "captions": 1, "hashtags": 2, "interest": 3}
 data = []
+checkpoint_file_name="./checkpoint.txt"
 
 def get_all_files(my_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
@@ -176,7 +177,7 @@ def generate():
     #input_files = get_all_files()
     #input_files = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
-    input_filenames = ['Entertainment']
+    input_filenames = ['shopping and  fashion']
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
     file_start_index,start_index=load_checkpoint()
