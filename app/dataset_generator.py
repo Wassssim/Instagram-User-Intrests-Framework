@@ -177,7 +177,7 @@ def generate():
     #input_files = get_all_files()
     #input_files = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
-    input_filenames = ['Entertainment']
+    input_filenames = ['shopping and  fashion']
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
     file_start_index,start_index=load_checkpoint()
