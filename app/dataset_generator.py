@@ -175,11 +175,14 @@ def load_checkpoint():
 
 def generate():
     #input_files = get_all_files()
-    #input_files = get_all_files(account_names_path)
+    input_filenames = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
-    input_filenames = ['shopping and  fashion']
+    #input_filenames = ['shopping and  fashion']
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
+    #________________file_start_index = line in file
+    #________________start_index = the file we're using 
+    
     file_start_index,start_index=load_checkpoint()
     #input_files=["shopping and  fashion"]
     #print(input_files)
@@ -206,7 +209,11 @@ def generate():
             print(df.info())
             #with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
             df.to_csv(output_file)
-            
+            #cleaning the data array
+            data=[]
+        except igramscraper.exception.instagram_exception.InstagramException as e :
+            print("Try an hour after")
+            exit()
         except Exception as e:
             print(e)
     
