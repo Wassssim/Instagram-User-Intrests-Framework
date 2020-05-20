@@ -18,6 +18,7 @@ instagram = Instagram()
 threshhold = 3000
 columns = {"photo_url": 0, "captions": 1, "hashtags": 2, "interest": 3}
 data = []
+checkpoint_file_name="./checkpoint.txt"
 
 def get_all_files(my_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
