@@ -19,7 +19,7 @@ threshhold = 3000
 columns = {"photo_url": 0, "captions": 1, "hashtags": 2, "interest": 3}
 data = []
 checkpoint_file_name="./checkpoint.txt"
-
+flag_for_instagram_exception=0
 def get_all_files(my_path):
     onlyfiles = [f for f in listdir(my_path) if isfile(join(my_path, f))]
     return onlyfiles
@@ -51,6 +51,8 @@ def get_medias(account,threshhold,current_file_start_index,current_index):
         current_index=str(current_index)
         checkpoint_file.write(current_file_start_index)
         checkpoint_file.write(current_index)
+        global flag_for_instagram_exception 
+        flag_for_instagram_exception = 1
         return None
         
     except Exception as e:
@@ -142,10 +144,10 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
         checkpoint_file.truncate(0)
         checkpoint_file.write(current_file_start_index)
         checkpoint_file.write(current_index)
-        return (interest,1)
+        return interest
     
     file.close()
-    return (interest,0)
+    return interest
 def laod_data_into_dataframe(start_index,output_file_added_to_path):
     new_dataframe = pd.DataFrame(data=data, columns=columns)
     if (start_index!=0) and (isfile(output_file_added_to_path)):
@@ -176,6 +178,7 @@ def load_checkpoint():
     return file_start_index,start_index
 
 def generate():
+    global flag_for_instagram_exception 
     #input_files = get_all_files()
     input_filenames = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
@@ -203,7 +206,7 @@ def generate():
             if len(Lines)==2:
                 start_index=Lines[1]
             start_index=int(start_index)
-            interest,flag=generate_dataframe(input_file,current_file_start_index,start_index)
+            interest=generate_dataframe(input_file,current_file_start_index,start_index)
             output_file=make_output_file(input_filename)
             df=laod_data_into_dataframe(start_index, output_file )
             print("Dataset generated")
@@ -211,8 +214,8 @@ def generate():
             #with open(output_file_added_to_path, 'w', encoding='utf-8') as f:
             df.to_csv(output_file)
             #cleaning the data array
-            if flag==0:
-                break
+            if flag_for_instagram_exception==1:
+                exit()
         except igramscraper.exception.instagram_exception.InstagramException as e :
             print("Try an hour after")
             exit()
