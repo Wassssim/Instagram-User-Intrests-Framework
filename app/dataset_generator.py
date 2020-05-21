@@ -54,6 +54,10 @@ def get_medias(account,threshhold,current_file_start_index,current_index):
         
     except Exception as e:
         print(e)
+        #YOUR CODE HERE
+        current_file_start_index=str(current_file_start_index)+'\n'
+        next_index=str(current_index+1)
+        update_checkpoint(current_file_start_index,next_index)
         return None
     
 
@@ -165,9 +169,9 @@ def load_checkpoint():
 def generate():
     global flag_for_instagram_exception 
     #input_files = get_all_files()
-    input_filenames = get_all_files(account_names_path)
+    #input_filenames = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
-    #input_filenames = ['shopping and  fashion']
+    input_filenames = ['technology']
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
     #________________file_start_index = line in file
