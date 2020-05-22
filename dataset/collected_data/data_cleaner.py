@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import hashtags as ht
 import re
-interest = 'Buisness'
+interest = 'technology'
 filename=interest+".csv"
 def merge():
     pass
