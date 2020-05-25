@@ -43,7 +43,10 @@ def generate_model_data(threshhold):
         shuffle(df)
         df = set_threshhold(df,threshhold)
         model_data = model_data.append(df, ignore_index = True)
-    print(model_data)
+        
+    model_data = model_data[['photo_url','captions','hashtags','interest']]
+    return model_data
+
 
 def save_data(clean_data,filename):
     clean_data.to_csv(filename)    
