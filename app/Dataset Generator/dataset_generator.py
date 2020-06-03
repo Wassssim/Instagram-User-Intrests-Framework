@@ -18,7 +18,7 @@ instagram = Instagram()
 threshhold = 3000
 columns = {"photo_url": 0, "captions": 1, "hashtags": 2, "interest": 3}
 data = []
-checkpoint_filename="./checkpoint.txt"
+checkpoint_file_name="./checkpoint.txt"
 flag_for_instagram_exception=0
 
 
@@ -42,9 +42,12 @@ def get_medias(account,threshhold,current_file_start_index,current_index):
         """
         print(e)
         #YOUR CODE HERE
+        checkpoint_file=open('./checkpoint.txt','w')
+        checkpoint_file.truncate(0)
         current_file_start_index=str(current_file_start_index)+'\n'
         current_index=str(current_index)
-        update_checkpoint(current_file_start_index,current_index)
+        checkpoint_file.write(current_file_start_index)
+        checkpoint_file.write(current_index)
         global flag_for_instagram_exception 
         flag_for_instagram_exception = 1
         return None
@@ -56,6 +59,25 @@ def get_medias(account,threshhold,current_file_start_index,current_index):
         next_index=str(current_index+1)
         update_checkpoint(current_file_start_index,next_index)
         return None
+    """
+        ---Here We tried Handling this exception by creating a session pool 
+        It didn't work
+
+    except igramscraper.exception.instagram_exception.InstagramException :
+        try:
+            instagram=connect()  
+            account_attributes = instagram.get_account(account)
+            media_count = account_attributes.media_count
+            post_number = min(media_count,threshhold)
+            print(media_count)
+            medias = instagram.get_medias(account, post_number)
+            #sleep(30)
+            
+            return medias 
+        except Exception as e:
+            print(e)
+            return None
+    """
     
 
 
@@ -71,7 +93,6 @@ def create_post(media, columns, interest):
 
 
 
-
 def generate_dataframe(input_filename,current_file_start_index,start_index):
     file = open(input_filename, "r", encoding = "utf-8")
     Lines = file.readlines()
@@ -84,8 +105,11 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
         current_file_start_index=current_file_start_index+1
         current_index=str(0)
         current_file_start_index=str(current_file_start_index)+'\n'
-        update_checkpoint(current_file_start_index,current_index)
-        return interest
+        checkpoint_file=open('./checkpoint.txt','w')
+        checkpoint_file.truncate(0)
+        checkpoint_file.write(current_file_start_index)
+        checkpoint_file.write(current_index)
+        return (interest,1)
     
     
     for line in Lines[start_index:]:
@@ -107,7 +131,7 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
                     bar.update(i)
                 #dataset[account] = user
         else:
-            return interest
+            return (interest,0)
             break
             
     if int(current_index)>= len(Lines):
@@ -117,16 +141,14 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
         current_file_start_index=current_file_start_index+1
         current_index=str(0)
         current_file_start_index=str(current_file_start_index)+'\n'
-   
-        update_checkpoint(current_file_start_index,current_index)
-    
+        checkpoint_file=open('./checkpoint.txt','w')
+        checkpoint_file.truncate(0)
+        checkpoint_file.write(current_file_start_index)
+        checkpoint_file.write(current_index)
         return interest
     
     file.close()
     return interest
-
-
-
 def laod_data_into_dataframe(start_index,output_file_added_to_path):
     new_dataframe = pd.DataFrame(data=data, columns=columns)
     if (start_index!=0) and (isfile(output_file_added_to_path)):
@@ -137,20 +159,13 @@ def laod_data_into_dataframe(start_index,output_file_added_to_path):
         return new_dataframe
 
 
-def update_checkpoint(current_file_start_index,current_index):
-    checkpoint_file=open(checkpoint_filename,'w')
-    checkpoint_file.truncate(0)
-    checkpoint_file.write(current_file_start_index)
-    checkpoint_file.write(current_index)
-        
-
 def make_output_file(input_file):
     output_file=input_file+".csv"
     output_file_added_to_path=output_path+output_file
     return output_file_added_to_path        
 
 def load_checkpoint():
-    checkPoint_file = open(checkpoint_filename, "r", encoding = "utf-8")
+    checkPoint_file = open('./checkpoint.txt', "r", encoding = "utf-8")
     Lines = checkPoint_file.readlines()
     file_start_index=0
     start_index=0
@@ -186,7 +201,7 @@ def generate():
         print("input file :"+input_file )
         try:
             '''  if it's not the first iteration we should retrieve start_index '''
-            checkPoint_file = open(checkpoint_filename, "r", encoding = "utf-8")
+            checkPoint_file = open('./checkpoint.txt', "r", encoding = "utf-8")
             Lines = checkPoint_file.readlines()
             start_index=0
             if len(Lines)==2:
@@ -213,36 +228,11 @@ def generate():
 
 if __name__=="__main__":
     generate()
-
-
-
-
-
-#Problems:
-#high_res image always available?
-#hash tag functions testing
     """
     #__testing progressbar
     for i in progressbar.progressbar(range(100)):
         sleep(0.02)
     """
-
-    """
-        ---Here We tried Handling this exception by creating a session pool 
-        It didn't work
-
-    except igramscraper.exception.instagram_exception.InstagramException :
-        try:
-            instagram=connect()  
-            account_attributes = instagram.get_account(account)
-            media_count = account_attributes.media_count
-            post_number = min(media_count,threshhold)
-            print(media_count)
-            medias = instagram.get_medias(account, post_number)
-            #sleep(30)
-            
-            return medias 
-        except Exception as e:
-            print(e)
-            return None
-    """
+#Problems:
+#high_res image always available?
+#hash tag functions testing
