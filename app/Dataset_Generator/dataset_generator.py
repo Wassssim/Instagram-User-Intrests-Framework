@@ -15,7 +15,7 @@ import progressbar
 account_names_path="../../dataset/account_names/"
 output_path="../../dataset/collected_data/"
 instagram = Instagram()
-threshhold = 3000
+threshhold = 8000
 columns = {"photo_url": 0, "captions": 1, "hashtags": 2, "interest": 3}
 data = []
 checkpoint_filename="./checkpoint.txt"
@@ -73,6 +73,7 @@ def create_post(media, columns, interest):
 
 
 def generate_dataframe(input_filename,current_file_start_index,start_index):
+    global flag_for_instagram_exception
     file = open(input_filename, "r", encoding = "utf-8")
     Lines = file.readlines()
     #print(Lines)
@@ -93,8 +94,9 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
         post = []
         medias=get_medias(account,threshhold,current_file_start_index,current_index)
         #______________________ We got Medias
+        current_index=current_index+1
+            
         if medias!=None:
-            current_index=current_index+1
             ## Logging account 
             print("interest : "+interest+"\n")
             print("account name : "+account+"\n")            
@@ -107,8 +109,9 @@ def generate_dataframe(input_filename,current_file_start_index,start_index):
                     bar.update(i)
                 #dataset[account] = user
         else:
-            return interest
-            break
+            if (flag_for_instagram_exception == 1):
+                return interest
+            #break
             
     if int(current_index)>= len(Lines):
         '''if all medias of this interest are dowloaded initialise 
@@ -192,7 +195,9 @@ def generate():
             if len(Lines)==2:
                 start_index=Lines[1]
             start_index=int(start_index)
+            
             interest=generate_dataframe(input_file,current_file_start_index,start_index)
+            
             output_file=make_output_file(input_filename)
             df=laod_data_into_dataframe(start_index, output_file )
             print("Dataset generated")
