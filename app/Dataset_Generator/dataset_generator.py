@@ -169,9 +169,9 @@ def load_checkpoint():
 def generate():
     global flag_for_instagram_exception 
     #input_files = get_all_files()
-    #input_filenames = get_all_files(account_names_path)
+    input_filenames = get_all_files(account_names_path)
     #Use Second Line In case you want to get all files
-    input_filenames = ['Industry','Outdoors']
+    #input_filenames = ['Industry','Outdoors']
     #input_files=["shopping and  fashion"]
     ''' we will retrieve name last_file processed with it's start_index from checkpoint file'''
     #________________file_start_index = line in file
@@ -217,8 +217,9 @@ def generate():
 
 
 if __name__=="__main__":
-    generate()
-
+    while True :
+        generate()
+        sleep(60*10)
 
 
 
